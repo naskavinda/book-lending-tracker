@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Search, User, Edit, Trash2, Mail, Phone } from 'lucide-react';
 import { useSidebar } from '@/contexts/SidebarContext';
+import { apiGet, apiPost, apiPut, apiDelete } from '@/lib/api';
 
 interface Friend {
   _id: string;
@@ -191,7 +192,7 @@ export default function FriendsPage() {
   const fetchFriends = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/friends');
+      const response = await apiGet('/api/friends');
       const data = await response.json();
       if (data.success) {
         setFriends(data.data);
@@ -213,13 +214,7 @@ export default function FriendsPage() {
 
   const handleAddFriend = async (friendData: FriendFormData) => {
     try {
-      const response = await fetch('/api/friends', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(friendData),
-      });
+      const response = await apiPost('/api/friends', friendData);
 
       const data = await response.json();
       if (data.success) {
@@ -246,13 +241,7 @@ export default function FriendsPage() {
     if (!editingFriend) return;
 
     try {
-      const response = await fetch(`/api/friends/${editingFriend._id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(friendData),
-      });
+      const response = await apiPut(`/api/friends/${editingFriend._id}`, friendData);
 
       const data = await response.json();
       if (data.success) {
@@ -275,9 +264,7 @@ export default function FriendsPage() {
     if (!confirm('Are you sure you want to delete this friend?')) return;
 
     try {
-      const response = await fetch(`/api/friends/${id}`, {
-        method: 'DELETE',
-      });
+      const response = await apiDelete(`/api/friends/${id}`);
 
       const data = await response.json();
       if (data.success) {

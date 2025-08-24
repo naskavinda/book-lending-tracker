@@ -1,5 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { apiGet } from '@/lib/api';
 
 interface SidebarCounts {
   books: number;
@@ -27,9 +28,9 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
   const refreshCounts = useCallback(async () => {
     try {
       const [booksRes, friendsRes, lendingsRes] = await Promise.all([
-        fetch('/api/books'),
-        fetch('/api/friends'),
-        fetch('/api/lendings')
+        apiGet('/api/books'),
+        apiGet('/api/friends'),
+        apiGet('/api/lendings')
       ]);
 
       const [booksData, friendsData, lendingsData] = await Promise.all([

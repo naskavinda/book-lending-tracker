@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Search, Filter, BookOpen, Edit, Trash2 } from 'lucide-react';
 import { useSidebar } from '@/contexts/SidebarContext';
+import { apiGet, apiPost, apiPut, apiDelete } from '@/lib/api';
 
 interface Book {
   _id: string;
@@ -247,7 +248,7 @@ export default function BooksPage() {
   const fetchBooks = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/books');
+      const response = await apiGet('/api/books');
       const data = await response.json();
       if (data.success) {
         setBooks(data.data);
@@ -271,13 +272,7 @@ export default function BooksPage() {
 
   const handleAddBook = async (bookData: BookFormData) => {
     try {
-      const response = await fetch('/api/books', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(bookData),
-      });
+      const response = await apiPost('/api/books', bookData);
 
       const data = await response.json();
       if (data.success) {
@@ -304,13 +299,7 @@ export default function BooksPage() {
     if (!editingBook) return;
 
     try {
-      const response = await fetch(`/api/books/${editingBook._id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(bookData),
-      });
+      const response = await apiPut(`/api/books/${editingBook._id}`, bookData);
 
       const data = await response.json();
       if (data.success) {
@@ -333,9 +322,7 @@ export default function BooksPage() {
     if (!confirm('Are you sure you want to delete this book?')) return;
 
     try {
-      const response = await fetch(`/api/books/${id}`, {
-        method: 'DELETE',
-      });
+      const response = await apiDelete(`/api/books/${id}`);
 
       const data = await response.json();
       if (data.success) {

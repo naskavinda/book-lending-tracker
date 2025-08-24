@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Search, Book, User, Calendar, Check } from 'lucide-react';
 import { useSidebar } from '@/contexts/SidebarContext';
+import { apiGet, apiPost, apiPut } from '@/lib/api';
 
 interface Book {
   _id: string;
@@ -252,9 +253,9 @@ export default function LendPage() {
     try {
       setLoading(true);
       const [lendingsRes, booksRes, friendsRes] = await Promise.all([
-        fetch('/api/lendings'),
-        fetch('/api/books'),
-        fetch('/api/friends')
+        apiGet('/api/lendings'),
+        apiGet('/api/books'),
+        apiGet('/api/friends')
       ]);
 
       const [lendingsData, booksData, friendsData] = await Promise.all([
@@ -292,13 +293,7 @@ export default function LendPage() {
 
   const handleLendBook = async (lendingData: LendingFormData) => {
     try {
-      const response = await fetch('/api/lendings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(lendingData),
-      });
+      const response = await apiPost('/api/lendings', lendingData);
 
       const data = await response.json();
       if (data.success) {
@@ -320,15 +315,9 @@ export default function LendPage() {
     if (!confirm('Mark this book as returned?')) return;
 
     try {
-      const response = await fetch(`/api/lendings/${lendingId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          status: 'returned',
-          actualReturnDate: new Date().toISOString()
-        }),
+      const response = await apiPut(`/api/lendings/${lendingId}`, { 
+        status: 'returned',
+        actualReturnDate: new Date().toISOString()
       });
 
       const data = await response.json();
