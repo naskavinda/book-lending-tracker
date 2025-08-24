@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Search, Filter, BookOpen, Edit, Trash2 } from 'lucide-react';
+import { useSidebar } from '@/contexts/SidebarContext';
 
 interface Book {
   _id: string;
@@ -233,6 +234,7 @@ export default function BooksPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [editingBook, setEditingBook] = useState<Book | null>(null);
+  const { updateBookCount } = useSidebar();
 
   // Fetch books from API
   useEffect(() => {
@@ -279,6 +281,7 @@ export default function BooksPage() {
         setBooks([data.data, ...books]);
         setShowAddForm(false);
         setEditingBook(null);
+        updateBookCount(1); // Increment sidebar count
       } else {
         console.error('Failed to add book:', data.error);
         alert('Failed to add book. Please try again.');
@@ -334,6 +337,7 @@ export default function BooksPage() {
       const data = await response.json();
       if (data.success) {
         setBooks(books.filter(book => book._id !== id));
+        updateBookCount(-1); // Decrement sidebar count
       } else {
         console.error('Failed to delete book:', data.error);
         alert('Failed to delete book. Please try again.');

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Search, User, Edit, Trash2, Mail, Phone } from 'lucide-react';
+import { useSidebar } from '@/contexts/SidebarContext';
 
 interface Friend {
   _id: string;
@@ -180,6 +181,7 @@ export default function FriendsPage() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingFriend, setEditingFriend] = useState<Friend | null>(null);
+  const { updateFriendCount } = useSidebar();
 
   // Fetch friends from API
   useEffect(() => {
@@ -224,6 +226,7 @@ export default function FriendsPage() {
         setFriends([data.data, ...friends]);
         setShowAddForm(false);
         setEditingFriend(null);
+        updateFriendCount(1); // Increment sidebar count
       } else {
         console.error('Failed to add friend:', data.error);
         alert('Failed to add friend. Please try again.');
@@ -279,6 +282,7 @@ export default function FriendsPage() {
       const data = await response.json();
       if (data.success) {
         setFriends(friends.filter(friend => friend._id !== id));
+        updateFriendCount(-1); // Decrement sidebar count
       } else {
         console.error('Failed to delete friend:', data.error);
         alert('Failed to delete friend. Please try again.');

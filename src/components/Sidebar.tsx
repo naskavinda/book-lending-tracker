@@ -1,11 +1,12 @@
 "use client";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { HomeIcon, BookOpenIcon, UsersIcon, ArrowRightOnRectangleIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useSidebar } from '@/contexts/SidebarContext';
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -14,41 +15,11 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   const pathname = usePathname();
-  const [counts, setCounts] = useState({
-    books: 0,
-    friends: 0,
-    activeLendings: 0
-  });
+  const { counts, refreshCounts } = useSidebar();
 
   useEffect(() => {
-    fetchCounts();
-  }, []);
-
-  const fetchCounts = async () => {
-    try {
-      const [booksRes, friendsRes, lendingsRes] = await Promise.all([
-        fetch('/api/books'),
-        fetch('/api/friends'),
-        fetch('/api/lendings')
-      ]);
-
-      const [booksData, friendsData, lendingsData] = await Promise.all([
-        booksRes.json(),
-        friendsRes.json(),
-        lendingsRes.json()
-      ]);
-
-      setCounts({
-        books: booksData.success ? booksData.data.length : 0,
-        friends: friendsData.success ? friendsData.data.length : 0,
-        activeLendings: lendingsData.success 
-          ? lendingsData.data.filter((l: { status: string }) => l.status === 'active').length 
-          : 0
-      });
-    } catch (error) {
-      console.error('Error fetching sidebar counts:', error);
-    }
-  };
+    refreshCounts();
+  }, [refreshCounts]);
 
   const navItems = [
     { name: 'Dashboard', href: '/', icon: HomeIcon, badge: null },

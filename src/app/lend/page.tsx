@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Search, Book, User, Calendar, Check } from 'lucide-react';
+import { useSidebar } from '@/contexts/SidebarContext';
 
 interface Book {
   _id: string;
@@ -168,12 +169,12 @@ function LendingList({ lendings, onReturn }: {
                     <Book className="h-6 w-6 text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-bold text-lg">{lending.bookId.title}</h3>
-                    <p className="text-gray-600 dark:text-gray-400">by {lending.bookId.author}</p>
+                    <h3 className="font-bold text-lg">{lending.bookId?.title || 'Unknown Book'}</h3>
+                    <p className="text-gray-600 dark:text-gray-400">by {lending.bookId?.author || 'Unknown Author'}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <User className="h-4 w-4 text-gray-500" />
-                      <span className="text-sm">Lent to {lending.friendId.name}</span>
-                      {lending.friendId.email && (
+                      <span className="text-sm">Lent to {lending.friendId?.name || 'Unknown Friend'}</span>
+                      {lending.friendId?.email && (
                         <span className="text-sm text-gray-500">({lending.friendId.email})</span>
                       )}
                     </div>
@@ -241,6 +242,7 @@ export default function LendPage() {
   const [showLendForm, setShowLendForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const { updateLendingCount } = useSidebar();
 
   useEffect(() => {
     fetchData();
@@ -272,10 +274,15 @@ export default function LendPage() {
   };
 
   const filteredLendings = lendings.filter(lending => {
+    // Skip lending records with missing book or friend data
+    if (!lending.bookId || !lending.friendId) {
+      return false;
+    }
+    
     const matchesSearch = 
-      lending.bookId.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      lending.bookId.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      lending.friendId.name.toLowerCase().includes(searchTerm.toLowerCase());
+      lending.bookId.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lending.bookId.author?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lending.friendId.name?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = 
       statusFilter === 'all' || lending.status === statusFilter;
@@ -298,6 +305,7 @@ export default function LendPage() {
         // Refresh data to get updated book status and lending records
         await fetchData();
         setShowLendForm(false);
+        updateLendingCount(1); // Increment active lending count
       } else {
         console.error('Failed to lend book:', data.error);
         alert('Failed to lend book. Please try again.');
@@ -327,6 +335,7 @@ export default function LendPage() {
       if (data.success) {
         // Refresh data to get updated status
         await fetchData();
+        updateLendingCount(-1); // Decrement active lending count
       } else {
         console.error('Failed to return book:', data.error);
         alert('Failed to return book. Please try again.');
