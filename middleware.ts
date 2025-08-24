@@ -1,11 +1,5 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
-
-// Routes that don't require authentication
-const publicRoutes = ['/login', '/register', '/api/auth/login', '/api/auth/register', '/api/auth/verify'];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -13,6 +7,12 @@ export function middleware(request: NextRequest) {
   // TEMPORARILY DISABLE AUTH FOR DEBUGGING
   console.log('Middleware called for:', pathname);
   return NextResponse.next();
+  
+  /*
+  // When re-enabling authentication, uncomment the imports above:
+  // import jwt from 'jsonwebtoken';
+  // const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
+  // const publicRoutes = ['/login', '/register', '/api/auth/login', '/api/auth/register', '/api/auth/verify'];
   
   // Check if the route is public
   if (publicRoutes.includes(pathname)) {
@@ -28,7 +28,9 @@ export function middleware(request: NextRequest) {
     }
 
     try {
-      jwt.verify(token, JWT_SECRET);
+      if (JWT_SECRET && token) {
+        jwt.verify(token, JWT_SECRET);
+      }
       return NextResponse.next();
     } catch {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
@@ -38,6 +40,7 @@ export function middleware(request: NextRequest) {
   // For non-API routes, redirect to login if no token in localStorage
   // This will be handled by the client-side ProtectedRoute component
   return NextResponse.next();
+  */
 }
 
 export const config = {
