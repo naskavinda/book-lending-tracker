@@ -1,58 +1,228 @@
 "use client";
-import { useState } from 'react';
-import BookForm from '@/components/BookForm';
-import BookList from '@/components/BookList';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { PlusIcon, MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/24/outline';
 
-// Sample data
-const sampleBooks = [
-  {
-    _id: '1',
-    title: 'The Great Gatsby',
-    author: 'F. Scott Fitzgerald',
-    genre: 'Fiction',
-    isbn: '978-0-7432-7356-5',
-    description: 'A classic American novel set in the Jazz Age.',
-    coverUrl: '',
-    tags: 'classic, american, literature',
-    status: 'available' as const,
-  },
-  {
-    _id: '2',
-    title: 'To Kill a Mockingbird',
-    author: 'Harper Lee',
-    genre: 'Fiction',
-    isbn: '978-0-06-112008-4',
-    description: 'A novel about racial injustice in the American South.',
-    coverUrl: '',
-    tags: 'classic, social justice',
-    status: 'lent' as const,
-    lentTo: 'Alice Johnson',
-    lentDate: '2024-01-15',
-  },
-  {
-    _id: '3',
-    title: 'Dune',
-    author: 'Frank Herbert',
-    genre: 'Science Fiction',
-    isbn: '978-0-441-17271-9',
-    description: 'Epic science fiction novel set on the desert planet Arrakis.',
-    coverUrl: '',
-    tags: 'sci-fi, epic, space',
-    status: 'available' as const,
-  },
-];
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Plus, Search, Filter, BookOpen, Edit, Trash2 } from 'lucide-react';
+
+interface Book {
+  _id: string;
+  title: string;
+  author: string;
+  genre?: string;
+  isbn?: string;
+  description?: string;
+  coverUrl?: string;
+  tags?: string;
+  status: 'available' | 'lent';
+  lentTo?: string;
+  lentDate?: string;
+}
+
+interface BookFormData {
+  title: string;
+  author: string;
+  genre?: string;
+  isbn?: string;
+  description?: string;
+  coverUrl?: string;
+  tags?: string;
+}
+
+function BookForm({ onSubmit, initialData = {}, onCancel }: { 
+  onSubmit: (data: BookFormData) => void, 
+  initialData?: Partial<BookFormData>,
+  onCancel: () => void 
+}) {
+  const [title, setTitle] = useState(initialData.title || '');
+  const [author, setAuthor] = useState(initialData.author || '');
+  const [genre, setGenre] = useState(initialData.genre || '');
+  const [isbn, setIsbn] = useState(initialData.isbn || '');
+  const [description, setDescription] = useState(initialData.description || '');
+  const [coverUrl, setCoverUrl] = useState(initialData.coverUrl || '');
+  const [tags, setTags] = useState(initialData.tags || '');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit({ title, author, genre, isbn, description, coverUrl, tags });
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">Title *</label>
+          <Input
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            required
+            placeholder="Enter book title"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Author *</label>
+          <Input
+            value={author}
+            onChange={e => setAuthor(e.target.value)}
+            required
+            placeholder="Enter author name"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Genre</label>
+          <Input
+            value={genre}
+            onChange={e => setGenre(e.target.value)}
+            placeholder="Fiction, Non-fiction, etc."
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">ISBN</label>
+          <Input
+            value={isbn}
+            onChange={e => setIsbn(e.target.value)}
+            placeholder="978-0000000000"
+          />
+        </div>
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">Description</label>
+        <textarea
+          value={description}
+          onChange={e => setDescription(e.target.value)}
+          className="w-full p-3 border rounded-md min-h-[80px] resize-none"
+          placeholder="Brief description of the book"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">Cover Image URL</label>
+        <Input
+          type="url"
+          value={coverUrl}
+          onChange={e => setCoverUrl(e.target.value)}
+          placeholder="https://example.com/cover.jpg"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">Tags</label>
+        <Input
+          value={tags}
+          onChange={e => setTags(e.target.value)}
+          placeholder="fantasy, adventure, bestseller"
+        />
+      </div>
+      <div className="flex gap-2">
+        <Button type="submit" className="flex-1">
+          Save Book
+        </Button>
+        <Button type="button" variant="outline" onClick={onCancel}>
+          Cancel
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+function BookList({ books, onEdit, onDelete, onLend }: {
+  books: Book[];
+  onEdit: (book: Book) => void;
+  onDelete: (id: string) => void;
+  onLend: (book: Book) => void;
+}) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      {books.map((book) => (
+        <Card key={book._id} className="hover:shadow-lg transition-all duration-300">
+          <CardHeader className="p-0">
+            {book.coverUrl ? (
+              <div className="w-full h-48 overflow-hidden">
+                <img 
+                  src={book.coverUrl} 
+                  alt={book.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <div className="w-full h-48 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 flex items-center justify-center">
+                <BookOpen className="h-16 w-16 text-blue-500" />
+              </div>
+            )}
+          </CardHeader>
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between mb-2">
+              <h3 className="font-bold text-lg line-clamp-2 pr-2">{book.title}</h3>
+              <Badge variant={book.status === 'available' ? 'default' : 'secondary'}>
+                {book.status}
+              </Badge>
+            </div>
+            <p className="text-gray-600 dark:text-gray-400 mb-2">by {book.author}</p>
+            {book.genre && (
+              <Badge variant="outline" className="mb-2">
+                {book.genre}
+              </Badge>
+            )}
+            {book.description && (
+              <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-3 mb-3">
+                {book.description}
+              </p>
+            )}
+            {book.status === 'lent' && book.lentTo && (
+              <p className="text-sm text-amber-600 dark:text-amber-400 mb-3">
+                Lent to {book.lentTo}
+              </p>
+            )}
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" size="sm" onClick={() => onEdit(book)}>
+                <Edit className="h-4 w-4 mr-1" />
+                Edit
+              </Button>
+              {book.status === 'available' && (
+                <Button size="sm" onClick={() => onLend(book)}>
+                  Lend
+                </Button>
+              )}
+              <Button variant="destructive" size="sm" onClick={() => onDelete(book._id)}>
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
 
 export default function BooksPage() {
-  const [books, setBooks] = useState(sampleBooks);
+  const [books, setBooks] = useState<Book[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [editingBook, setEditingBook] = useState(null);
+  const [editingBook, setEditingBook] = useState<Book | null>(null);
+
+  // Fetch books from API
+  useEffect(() => {
+    fetchBooks();
+  }, []);
+
+  const fetchBooks = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/books');
+      const data = await response.json();
+      if (data.success) {
+        setBooks(data.data);
+      } else {
+        console.error('Failed to fetch books:', data.error);
+      }
+    } catch (error) {
+      console.error('Error fetching books:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredBooks = books.filter(book => {
     const matchesSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -62,27 +232,88 @@ export default function BooksPage() {
     return matchesSearch && matchesStatus;
   });
 
-  const handleAddBook = (bookData: any) => {
-    const newBook = {
-      ...bookData,
-      _id: Date.now().toString(),
-      status: 'available' as const,
-    };
-    setBooks([...books, newBook]);
-    setShowAddForm(false);
+  const handleAddBook = async (bookData: BookFormData) => {
+    try {
+      const response = await fetch('/api/books', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bookData),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setBooks([data.data, ...books]);
+        setShowAddForm(false);
+        setEditingBook(null);
+      } else {
+        console.error('Failed to add book:', data.error);
+        alert('Failed to add book. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error adding book:', error);
+      alert('Failed to add book. Please try again.');
+    }
   };
 
-  const handleEditBook = (book: any) => {
+  const handleEditBook = (book: Book) => {
     setEditingBook(book);
     setShowAddForm(true);
   };
 
-  const handleDeleteBook = (id: string) => {
-    setBooks(books.filter(book => book._id !== id));
+  const handleUpdateBook = async (bookData: BookFormData) => {
+    if (!editingBook) return;
+
+    try {
+      const response = await fetch(`/api/books/${editingBook._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bookData),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setBooks(books.map(book => 
+          book._id === editingBook._id ? data.data : book
+        ));
+        setShowAddForm(false);
+        setEditingBook(null);
+      } else {
+        console.error('Failed to update book:', data.error);
+        alert('Failed to update book. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error updating book:', error);
+      alert('Failed to update book. Please try again.');
+    }
   };
 
-  const handleLendBook = (book: any) => {
-    alert(`Lend book: ${book.title}`);
+  const handleDeleteBook = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this book?')) return;
+
+    try {
+      const response = await fetch(`/api/books/${id}`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setBooks(books.filter(book => book._id !== id));
+      } else {
+        console.error('Failed to delete book:', data.error);
+        alert('Failed to delete book. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error deleting book:', error);
+      alert('Failed to delete book. Please try again.');
+    }
+  };
+
+  const handleLendBook = (book: Book) => {
+    alert(`Lend book: ${book.title} - Feature coming soon!`);
   };
 
   const stats = {
@@ -91,14 +322,22 @@ export default function BooksPage() {
     lent: books.filter(b => b.status === 'lent').length,
   };
 
+  if (loading) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full max-w-full overflow-x-hidden space-y-4 sm:space-y-6 p-4 sm:p-6 lg:p-8">
+    <div className="container mx-auto p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-100 dark:to-slate-400 bg-clip-text text-transparent">
-          Books
-        </h1>
-        <Button onClick={() => setShowAddForm(!showAddForm)} className="w-full sm:w-auto">
-          <PlusIcon className="h-4 w-4 mr-2" />
+        <h1 className="text-3xl font-bold">Books</h1>
+        <Button onClick={() => setShowAddForm(!showAddForm)}>
+          <Plus className="h-4 w-4 mr-2" />
           Add Book
         </Button>
       </div>
@@ -133,29 +372,23 @@ export default function BooksPage() {
           </CardHeader>
           <CardContent>
             <BookForm 
-              onSubmit={handleAddBook} 
+              onSubmit={editingBook ? handleUpdateBook : handleAddBook} 
               initialData={editingBook || {}}
-            />
-            <Button 
-              variant="outline" 
-              onClick={() => {
+              onCancel={() => {
                 setShowAddForm(false);
                 setEditingBook(null);
               }}
-              className="mt-4"
-            >
-              Cancel
-            </Button>
+            />
           </CardContent>
         </Card>
       )}
 
       {/* Search and Filter */}
       <Card>
-        <CardContent className="p-3 sm:p-4">
-          <div className="flex flex-col gap-3 sm:gap-4">
+        <CardContent className="p-4">
+          <div className="flex flex-col gap-4">
             <div className="flex-1 relative">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 placeholder="Search books..."
                 value={searchTerm}
@@ -164,11 +397,11 @@ export default function BooksPage() {
               />
             </div>
             <div className="flex items-center gap-2">
-              <FunnelIcon className="h-4 w-4 text-gray-400" />
+              <Filter className="h-4 w-4 text-gray-400" />
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="flex-1 px-3 py-2 border rounded-md bg-background text-sm"
+                className="flex-1 px-3 py-2 border rounded-md bg-background"
               >
                 <option value="all">All Status</option>
                 <option value="available">Available</option>

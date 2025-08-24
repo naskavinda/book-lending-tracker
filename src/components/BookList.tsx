@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { BookOpenIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { BookOpen, Edit, Trash2 } from 'lucide-react';
 
 interface Book {
   _id: string;
@@ -42,7 +42,7 @@ export default function BookList({ books, onEdit, onDelete, onLend }: BookListPr
               />
             ) : (
               <div className="w-full h-40 sm:h-48 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 flex items-center justify-center">
-                <BookOpenIcon className="h-12 w-12 sm:h-16 sm:w-16 text-blue-500" />
+                <BookOpen className="h-12 w-12 sm:h-16 sm:w-16 text-blue-500" />
               </div>
             )}
           </CardHeader>
@@ -72,7 +72,7 @@ export default function BookList({ books, onEdit, onDelete, onLend }: BookListPr
             )}
             <div className="flex flex-wrap gap-1 sm:gap-2">
               <Button variant="outline" size="sm" onClick={() => onEdit(book)} className="text-xs">
-                <PencilIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                <Edit className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                 Edit
               </Button>
               {book.status === 'available' && (
@@ -81,7 +81,7 @@ export default function BookList({ books, onEdit, onDelete, onLend }: BookListPr
                 </Button>
               )}
               <Button variant="destructive" size="sm" onClick={() => onDelete(book._id)} className="text-xs">
-                <TrashIcon className="h-3 w-3 sm:h-4 sm:w-4" />
+                <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
             </div>
           </CardContent>

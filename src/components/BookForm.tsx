@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpenIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { BookOpen, Sparkles } from 'lucide-react';
 
 export default function BookForm({ onSubmit, initialData = {} }: { onSubmit: (data: any) => void, initialData?: any }) {
   const [title, setTitle] = useState(initialData.title || '');
@@ -25,7 +25,7 @@ export default function BookForm({ onSubmit, initialData = {} }: { onSubmit: (da
       <CardHeader className="space-y-1 p-4 sm:p-6">
         <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
           <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600">
-            <BookOpenIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+            <BookOpen className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
           </div>
           Add New Book
         </CardTitle>
@@ -111,7 +111,7 @@ export default function BookForm({ onSubmit, initialData = {} }: { onSubmit: (da
             type="submit" 
             className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium py-2.5 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-[1.02]"
           >
-            <SparklesIcon className="h-4 w-4 mr-2" />
+            <Sparkles className="h-4 w-4 mr-2" />
             Save Book
           </Button>
         </form>
