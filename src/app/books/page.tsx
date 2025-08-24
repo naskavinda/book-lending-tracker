@@ -248,8 +248,11 @@ export default function BooksPage() {
   const fetchBooks = async () => {
     try {
       setLoading(true);
+      console.log('Fetching books...');
       const response = await apiGet('/api/books');
+      console.log('Books response status:', response.status);
       const data = await response.json();
+      console.log('Books data:', data);
       if (data.success) {
         setBooks(data.data);
       } else {

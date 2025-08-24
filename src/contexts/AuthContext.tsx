@@ -56,10 +56,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const login = (token: string) => {
+    console.log('Storing token:', token);
     localStorage.setItem('token', token);
+    console.log('Token stored in localStorage');
     // Decode token to get user info (simple JWT decode)
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
+      console.log('Decoded token payload:', payload);
       setUser({
         userId: payload.userId,
         username: payload.username
