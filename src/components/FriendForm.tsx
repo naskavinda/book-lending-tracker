@@ -1,7 +1,18 @@
 "use client";
 import { useState } from 'react';
 
-export default function FriendForm({ onSubmit, initialData = {} }: { onSubmit: (data: any) => void, initialData?: any }) {
+interface FriendFormData {
+  name: string;
+  email?: string;
+  phone?: string;
+}
+
+interface FriendFormProps {
+  onSubmit: (data: FriendFormData) => void;
+  initialData?: Partial<FriendFormData>;
+}
+
+export default function FriendForm({ onSubmit, initialData = {} }: FriendFormProps) {
   const [name, setName] = useState(initialData.name || '');
   const [email, setEmail] = useState(initialData.email || '');
   const [phone, setPhone] = useState(initialData.phone || '');

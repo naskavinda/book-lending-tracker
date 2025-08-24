@@ -6,7 +6,22 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, Sparkles } from 'lucide-react';
 
-export default function BookForm({ onSubmit, initialData = {} }: { onSubmit: (data: any) => void, initialData?: any }) {
+interface BookFormData {
+  title: string;
+  author: string;
+  genre?: string;
+  isbn?: string;
+  description?: string;
+  coverUrl?: string;
+  tags?: string;
+}
+
+interface BookFormProps {
+  onSubmit: (data: BookFormData) => void;
+  initialData?: Partial<BookFormData>;
+}
+
+export default function BookForm({ onSubmit, initialData = {} }: BookFormProps) {
   const [title, setTitle] = useState(initialData.title || '');
   const [author, setAuthor] = useState(initialData.author || '');
   const [genre, setGenre] = useState(initialData.genre || '');

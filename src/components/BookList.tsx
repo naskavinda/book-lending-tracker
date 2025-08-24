@@ -1,4 +1,5 @@
 "use client";
+import Image from 'next/image';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -32,9 +33,11 @@ export default function BookList({ books, onEdit, onDelete, onLend }: BookListPr
         <Card key={book._id} className="hover:shadow-lg transition-all duration-300 overflow-hidden">
           <CardHeader className="p-0">
             {book.coverUrl ? (
-              <img 
+              <Image 
                 src={book.coverUrl} 
                 alt={book.title}
+                width={300}
+                height={200}
                 className="w-full h-40 sm:h-48 object-cover"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';

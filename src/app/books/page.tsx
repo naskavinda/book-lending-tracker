@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -171,9 +172,11 @@ function BookList({ books, onEdit, onDelete, onLend }: {
           <CardHeader className="p-0">
             {book.coverUrl ? (
               <div className="w-full h-48 overflow-hidden">
-                <img 
+                <Image 
                   src={book.coverUrl} 
                   alt={book.title}
+                  width={300}
+                  height={200}
                   className="w-full h-full object-cover"
                 />
               </div>
