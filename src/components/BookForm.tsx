@@ -22,17 +22,17 @@ export default function BookForm({ onSubmit, initialData = {} }: { onSubmit: (da
 
   return (
     <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900">
-      <CardHeader className="space-y-1">
-        <CardTitle className="flex items-center gap-2 text-xl">
+      <CardHeader className="space-y-1 p-4 sm:p-6">
+        <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
           <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600">
-            <BookOpenIcon className="h-5 w-5 text-white" />
+            <BookOpenIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
           </div>
           Add New Book
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <CardContent className="p-4 sm:p-6 pt-0">
+        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+          <div className="grid grid-cols-1 gap-3 sm:gap-4">
             <div className="space-y-2">
               <Label htmlFor="title" className="text-sm font-medium">Title *</Label>
               <Input
@@ -55,8 +55,6 @@ export default function BookForm({ onSubmit, initialData = {} }: { onSubmit: (da
                 placeholder="Enter author name"
               />
             </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="genre" className="text-sm font-medium">Genre</Label>
               <Input

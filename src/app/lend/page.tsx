@@ -116,10 +116,12 @@ export default function LendPage() {
   };
 
   return (
-    <div className="w-full max-w-full overflow-x-hidden space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Lending Records</h1>
-        <Button onClick={() => setShowLendForm(!showLendForm)}>
+    <div className="w-full max-w-full overflow-x-hidden space-y-4 sm:space-y-6 p-4 sm:p-6 lg:p-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-100 dark:to-slate-400 bg-clip-text text-transparent">
+          Lending Records
+        </h1>
+        <Button onClick={() => setShowLendForm(!showLendForm)} className="w-full sm:w-auto">
           <PlusIcon className="h-4 w-4 mr-2" />
           New Lending
         </Button>

@@ -45,89 +45,96 @@ export default function LendingList({ lendings, onReturn, onExtend, onRemind }: 
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       {lendings.map((lending) => {
         const StatusIcon = getStatusIcon(lending.status);
         return (
           <Card key={lending._id} className="hover:shadow-lg transition-all duration-300">
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600">
-                    <BookOpenIcon className="h-5 w-5 text-white" />
+            <CardHeader className="pb-2 sm:pb-3 p-3 sm:p-6 sm:pb-3">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex-shrink-0">
+                    <BookOpenIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                   </div>
-                  <div>
-                    <CardTitle className="text-lg">{lending.bookTitle}</CardTitle>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">by {lending.bookAuthor}</p>
+                  <div className="min-w-0 flex-1">
+                    <CardTitle className="text-base sm:text-lg truncate">{lending.bookTitle}</CardTitle>
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">by {lending.bookAuthor}</p>
                   </div>
                 </div>
-                <Badge className={getStatusColor(lending.status)}>
+                <Badge className={`${getStatusColor(lending.status)} text-xs flex-shrink-0`}>
                   <StatusIcon className="h-3 w-3 mr-1" />
                   {lending.status}
                 </Badge>
               </div>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center gap-2 text-sm">
-                  <UserIcon className="h-4 w-4 text-gray-500" />
-                  <span>Lent to: <strong>{lending.friendName}</strong></span>
+            <CardContent className="space-y-2 sm:space-y-3 p-3 sm:p-6 pt-0">
+              <div className="grid grid-cols-1 gap-2 sm:gap-3">
+                <div className="flex items-center gap-2 text-xs sm:text-sm">
+                  <UserIcon className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500 flex-shrink-0" />
+                  <span className="truncate">Lent to: <strong>{lending.friendName}</strong></span>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <CalendarIcon className="h-4 w-4 text-gray-500" />
+                <div className="flex items-center gap-2 text-xs sm:text-sm">
+                  <CalendarIcon className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500 flex-shrink-0" />
                   <span>Lend Date: {new Date(lending.lendDate).toLocaleDateString()}</span>
                 </div>
                 {lending.expectedReturnDate && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <ClockIcon className="h-4 w-4 text-gray-500" />
-                    <span>Expected Return: {new Date(lending.expectedReturnDate).toLocaleDateString()}</span>
+                  <div className="flex items-center gap-2 text-xs sm:text-sm">
+                    <ClockIcon className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500 flex-shrink-0" />
+                    <span>Expected: {new Date(lending.expectedReturnDate).toLocaleDateString()}</span>
                   </div>
                 )}
                 {lending.actualReturnDate && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircleIcon className="h-4 w-4 text-green-500" />
+                  <div className="flex items-center gap-2 text-xs sm:text-sm">
+                    <CheckCircleIcon className="h-3 w-3 sm:h-4 sm:w-4 text-green-500 flex-shrink-0" />
                     <span>Returned: {new Date(lending.actualReturnDate).toLocaleDateString()}</span>
                   </div>
                 )}
               </div>
               
-              <div className="flex items-center gap-4 text-sm">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm">
                 <span>Days Out: <strong>{lending.daysOut}</strong></span>
                 {lending.condition && (
-                  <span>Condition: <Badge variant="outline">{lending.condition}</Badge></span>
+                  <span className="flex items-center gap-1">
+                    Condition: <Badge variant="outline" className="text-xs">{lending.condition}</Badge>
+                  </span>
                 )}
               </div>
 
               {lending.returnCondition && (
-                <div className="text-sm">
-                  Return Condition: <Badge variant="outline">{lending.returnCondition}</Badge>
+                <div className="text-xs sm:text-sm">
+                  Return Condition: <Badge variant="outline" className="text-xs">{lending.returnCondition}</Badge>
                 </div>
               )}
 
               {lending.status === 'active' && (
-                <div className="flex gap-2 pt-2">
-                  <Button variant="default" size="sm" onClick={() => onReturn(lending._id)}>
-                    <CheckCircleIcon className="h-4 w-4 mr-1" />
-                    Mark Returned
+                <div className="flex flex-wrap gap-1 sm:gap-2 pt-2">
+                  <Button variant="default" size="sm" onClick={() => onReturn(lending._id)} className="text-xs flex-1 sm:flex-none">
+                    <CheckCircleIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                    <span className="hidden sm:inline">Mark Returned</span>
+                    <span className="sm:hidden">Return</span>
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => onExtend(lending._id)}>
-                    <CalendarIcon className="h-4 w-4 mr-1" />
-                    Extend Date
+                  <Button variant="outline" size="sm" onClick={() => onExtend(lending._id)} className="text-xs flex-1 sm:flex-none">
+                    <CalendarIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                    <span className="hidden sm:inline">Extend Date</span>
+                    <span className="sm:hidden">Extend</span>
                   </Button>
-                  <Button variant="secondary" size="sm" onClick={() => onRemind(lending._id)}>
-                    Send Reminder
+                  <Button variant="secondary" size="sm" onClick={() => onRemind(lending._id)} className="text-xs w-full sm:w-auto">
+                    <span className="hidden sm:inline">Send Reminder</span>
+                    <span className="sm:hidden">Remind</span>
                   </Button>
                 </div>
               )}
               
               {lending.status === 'overdue' && (
-                <div className="flex gap-2 pt-2">
-                  <Button variant="default" size="sm" onClick={() => onReturn(lending._id)}>
-                    <CheckCircleIcon className="h-4 w-4 mr-1" />
-                    Mark Returned
+                <div className="flex flex-wrap gap-1 sm:gap-2 pt-2">
+                  <Button variant="default" size="sm" onClick={() => onReturn(lending._id)} className="text-xs flex-1 sm:flex-none">
+                    <CheckCircleIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                    <span className="hidden sm:inline">Mark Returned</span>
+                    <span className="sm:hidden">Return</span>
                   </Button>
-                  <Button variant="destructive" size="sm" onClick={() => onRemind(lending._id)}>
-                    Send Urgent Reminder
+                  <Button variant="destructive" size="sm" onClick={() => onRemind(lending._id)} className="text-xs flex-1 sm:flex-none">
+                    <span className="hidden sm:inline">Send Urgent Reminder</span>
+                    <span className="sm:hidden">Urgent Remind</span>
                   </Button>
                 </div>
               )}

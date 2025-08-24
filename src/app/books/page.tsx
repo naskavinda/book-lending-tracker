@@ -92,10 +92,12 @@ export default function BooksPage() {
   };
 
   return (
-    <div className="w-full max-w-full overflow-x-hidden space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Books</h1>
-        <Button onClick={() => setShowAddForm(!showAddForm)}>
+    <div className="w-full max-w-full overflow-x-hidden space-y-4 sm:space-y-6 p-4 sm:p-6 lg:p-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-100 dark:to-slate-400 bg-clip-text text-transparent">
+          Books
+        </h1>
+        <Button onClick={() => setShowAddForm(!showAddForm)} className="w-full sm:w-auto">
           <PlusIcon className="h-4 w-4 mr-2" />
           Add Book
         </Button>
@@ -150,12 +152,12 @@ export default function BooksPage() {
 
       {/* Search and Filter */}
       <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-4">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex flex-col gap-3 sm:gap-4">
             <div className="flex-1 relative">
               <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="Search books by title, author, or genre..."
+                placeholder="Search books..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -166,7 +168,7 @@ export default function BooksPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 border rounded-md bg-background"
+                className="flex-1 px-3 py-2 border rounded-md bg-background text-sm"
               >
                 <option value="all">All Status</option>
                 <option value="available">Available</option>
