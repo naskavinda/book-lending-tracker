@@ -3,6 +3,7 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import TopBar from '@/components/TopBar';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -17,12 +18,14 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
   }
 
   return (
-    <div className="flex min-h-screen max-w-full overflow-x-hidden">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="flex-1 lg:ml-64 min-w-0 w-full">
-        <TopBar onMenuClick={() => setSidebarOpen(true)} />
-        <main className="p-3 sm:p-4 md:p-6 lg:p-8 w-full max-w-full overflow-x-hidden">{children}</main>
+    <ProtectedRoute>
+      <div className="flex min-h-screen max-w-full overflow-x-hidden">
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <div className="flex-1 lg:ml-64 min-w-0 w-full">
+          <TopBar onMenuClick={() => setSidebarOpen(true)} />
+          <main className="p-3 sm:p-4 md:p-6 lg:p-8 w-full max-w-full overflow-x-hidden">{children}</main>
+        </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 }

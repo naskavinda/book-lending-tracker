@@ -5,19 +5,20 @@ import mongoose from 'mongoose';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectToDatabase();
+    const { id } = await params;
     
-    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json(
         { success: false, error: 'Invalid friend ID' },
         { status: 400 }
       );
     }
 
-    const friend = await Friend.findById(params.id);
+    const friend = await Friend.findById(id);
     
     if (!friend) {
       return NextResponse.json(
@@ -38,12 +39,13 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectToDatabase();
+    const { id } = await params;
     
-    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json(
         { success: false, error: 'Invalid friend ID' },
         { status: 400 }
@@ -53,7 +55,7 @@ export async function PUT(
     const body = await request.json();
     
     const friend = await Friend.findByIdAndUpdate(
-      params.id,
+      id,
       {
         name: body.name,
         email: body.email,
@@ -81,19 +83,20 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectToDatabase();
+    const { id } = await params;
     
-    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json(
         { success: false, error: 'Invalid friend ID' },
         { status: 400 }
       );
     }
 
-    const friend = await Friend.findByIdAndDelete(params.id);
+    const friend = await Friend.findByIdAndDelete(id);
 
     if (!friend) {
       return NextResponse.json(

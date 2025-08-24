@@ -24,6 +24,8 @@ export async function POST(request: NextRequest) {
     const book = new Book({
       title: body.title,
       author: body.author,
+      originalTitle: body.originalTitle,
+      originalAuthor: body.originalAuthor,
       genre: body.genre,
       isbn: body.isbn,
       description: body.description,

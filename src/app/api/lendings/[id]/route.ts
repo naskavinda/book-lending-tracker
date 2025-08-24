@@ -5,19 +5,20 @@ import mongoose from 'mongoose';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectToDatabase();
+    const { id } = await params;
     
-    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json(
         { success: false, error: 'Invalid lending ID' },
         { status: 400 }
       );
     }
 
-    const lending = await Lending.findById(params.id)
+    const lending = await Lending.findById(id)
       .populate('bookId', 'title author')
       .populate('friendId', 'name email');
     
@@ -40,12 +41,13 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectToDatabase();
+    const { id } = await params;
     
-    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json(
         { success: false, error: 'Invalid lending ID' },
         { status: 400 }
@@ -55,7 +57,7 @@ export async function PUT(
     const body = await request.json();
     
     const lending = await Lending.findByIdAndUpdate(
-      params.id,
+      id,
       {
         expectedReturnDate: body.expectedReturnDate ? new Date(body.expectedReturnDate) : undefined,
         actualReturnDate: body.actualReturnDate ? new Date(body.actualReturnDate) : undefined,
@@ -99,19 +101,20 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectToDatabase();
+    const { id } = await params;
     
-    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json(
         { success: false, error: 'Invalid lending ID' },
         { status: 400 }
       );
     }
 
-    const lending = await Lending.findById(params.id);
+    const lending = await Lending.findById(id);
 
     if (!lending) {
       return NextResponse.json(
@@ -127,7 +130,7 @@ export async function DELETE(
       lentDate: undefined
     });
 
-    await Lending.findByIdAndDelete(params.id);
+    await Lending.findByIdAndDelete(id);
 
     return NextResponse.json({ success: true, message: 'Lending record deleted successfully' });
   } catch (error) {

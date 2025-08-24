@@ -11,6 +11,8 @@ interface Book {
   _id: string;
   title: string;
   author: string;
+  originalTitle?: string;
+  originalAuthor?: string;
   genre?: string;
   isbn?: string;
   description?: string;
@@ -24,6 +26,8 @@ interface Book {
 interface BookFormData {
   title: string;
   author: string;
+  originalTitle?: string;
+  originalAuthor?: string;
   genre?: string;
   isbn?: string;
   description?: string;
@@ -38,6 +42,8 @@ function BookForm({ onSubmit, initialData = {}, onCancel }: {
 }) {
   const [title, setTitle] = useState(initialData.title || '');
   const [author, setAuthor] = useState(initialData.author || '');
+  const [originalTitle, setOriginalTitle] = useState(initialData.originalTitle || '');
+  const [originalAuthor, setOriginalAuthor] = useState(initialData.originalAuthor || '');
   const [genre, setGenre] = useState(initialData.genre || '');
   const [isbn, setIsbn] = useState(initialData.isbn || '');
   const [description, setDescription] = useState(initialData.description || '');
@@ -46,7 +52,17 @@ function BookForm({ onSubmit, initialData = {}, onCancel }: {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ title, author, genre, isbn, description, coverUrl, tags });
+    onSubmit({ 
+      title, 
+      author, 
+      originalTitle: originalTitle || undefined,
+      originalAuthor: originalAuthor || undefined,
+      genre: genre || undefined, 
+      isbn: isbn || undefined, 
+      description: description || undefined, 
+      coverUrl: coverUrl || undefined, 
+      tags: tags || undefined 
+    });
   };
 
   return (
@@ -68,6 +84,22 @@ function BookForm({ onSubmit, initialData = {}, onCancel }: {
             onChange={e => setAuthor(e.target.value)}
             required
             placeholder="Enter author name"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Original Title (if translated)</label>
+          <Input
+            value={originalTitle}
+            onChange={e => setOriginalTitle(e.target.value)}
+            placeholder="Original title in original language"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Original Author (if translated)</label>
+          <Input
+            value={originalAuthor}
+            onChange={e => setOriginalAuthor(e.target.value)}
+            placeholder="Original author name"
           />
         </div>
         <div>

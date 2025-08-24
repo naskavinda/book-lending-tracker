@@ -5,19 +5,20 @@ import mongoose from 'mongoose';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectToDatabase();
+    const { id } = await params;
     
-    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json(
         { success: false, error: 'Invalid book ID' },
         { status: 400 }
       );
     }
 
-    const book = await Book.findById(params.id);
+    const book = await Book.findById(id);
     
     if (!book) {
       return NextResponse.json(
@@ -38,12 +39,13 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectToDatabase();
+    const { id } = await params;
     
-    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json(
         { success: false, error: 'Invalid book ID' },
         { status: 400 }
@@ -53,10 +55,12 @@ export async function PUT(
     const body = await request.json();
     
     const book = await Book.findByIdAndUpdate(
-      params.id,
+      id,
       {
         title: body.title,
         author: body.author,
+        originalTitle: body.originalTitle,
+        originalAuthor: body.originalAuthor,
         genre: body.genre,
         isbn: body.isbn,
         description: body.description,
@@ -88,19 +92,20 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectToDatabase();
-    
-    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+    const { id } = await params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json(
         { success: false, error: 'Invalid book ID' },
         { status: 400 }
       );
     }
 
-    const book = await Book.findByIdAndDelete(params.id);
+    const book = await Book.findByIdAndDelete(id);
 
     if (!book) {
       return NextResponse.json(
